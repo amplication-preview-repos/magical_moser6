@@ -4,8 +4,8 @@ import { AnswerChoiceModule } from "./answerChoice/answerChoice.module";
 import { QuestionModule } from "./question/question.module";
 import { MatchModule } from "./match/match.module";
 import { UserModule } from "./user/user.module";
-import { ChatModule } from "./chat/chat.module";
 import { MessageModule } from "./message/message.module";
+import { ChatModule } from "./chat/chat.module";
 import { MessengerModule } from "./Messenger/messenger.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -29,8 +29,8 @@ import { AuthModule } from "./auth/auth.module";
     QuestionModule,
     MatchModule,
     UserModule,
-    ChatModule,
     MessageModule,
+    ChatModule,
     MessengerModule,
     HealthModule,
     PrismaModule,

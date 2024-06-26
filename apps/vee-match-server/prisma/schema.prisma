@@ -39,6 +39,7 @@ model Question {
 }
 
 model Match {
+  chats      Chat[]
   createdAt  DateTime @default(now())
   id         String   @id @default(cuid())
   matchScore Int?
@@ -62,14 +63,21 @@ model User {
   username    String       @unique
 }
 
-model Chat {
+model Message {
+  chat      Chat?    @relation(fields: [chatId], references: [id])
+  chatId    String?
+  content   String?
   createdAt DateTime @default(now())
   id        String   @id @default(cuid())
+  sender    String?
   updatedAt DateTime @updatedAt
 }
 
-model Message {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  updatedAt DateTime @updatedAt
+model Chat {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  match     Match?    @relation(fields: [matchId], references: [id])
+  matchId   String?
+  messages  Message[]
+  updatedAt DateTime  @updatedAt
 }

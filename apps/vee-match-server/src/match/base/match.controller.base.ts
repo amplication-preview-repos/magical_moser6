@@ -26,6 +26,9 @@ import { Match } from "./Match";
 import { MatchFindManyArgs } from "./MatchFindManyArgs";
 import { MatchWhereUniqueInput } from "./MatchWhereUniqueInput";
 import { MatchUpdateInput } from "./MatchUpdateInput";
+import { ChatFindManyArgs } from "../../chat/base/ChatFindManyArgs";
+import { Chat } from "../../chat/base/Chat";
+import { ChatWhereUniqueInput } from "../../chat/base/ChatWhereUniqueInput";
 
 @swagger.ApiBearerAuth()
 @common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
@@ -193,5 +196,107 @@ export class MatchControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @common.Get("/:id/chats")
+  @ApiNestedQuery(ChatFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "read",
+    possession: "any",
+  })
+  async findChats(
+    @common.Req() request: Request,
+    @common.Param() params: MatchWhereUniqueInput
+  ): Promise<Chat[]> {
+    const query = plainToClass(ChatFindManyArgs, request.query);
+    const results = await this.service.findChats(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        match: {
+          select: {
+            id: true,
+          },
+        },
+
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/chats")
+  @nestAccessControl.UseRoles({
+    resource: "Match",
+    action: "update",
+    possession: "any",
+  })
+  async connectChats(
+    @common.Param() params: MatchWhereUniqueInput,
+    @common.Body() body: ChatWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      chats: {
+        connect: body,
+      },
+    };
+    await this.service.updateMatch({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/chats")
+  @nestAccessControl.UseRoles({
+    resource: "Match",
+    action: "update",
+    possession: "any",
+  })
+  async updateChats(
+    @common.Param() params: MatchWhereUniqueInput,
+    @common.Body() body: ChatWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      chats: {
+        set: body,
+      },
+    };
+    await this.service.updateMatch({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/chats")
+  @nestAccessControl.UseRoles({
+    resource: "Match",
+    action: "update",
+    possession: "any",
+  })
+  async disconnectChats(
+    @common.Param() params: MatchWhereUniqueInput,
+    @common.Body() body: ChatWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      chats: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateMatch({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

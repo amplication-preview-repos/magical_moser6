@@ -11,17 +11,32 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { ChatCreateNestedManyWithoutMatchesInput } from "./ChatCreateNestedManyWithoutMatchesInput";
 import {
+  ValidateNested,
+  IsOptional,
   IsInt,
   Min,
   Max,
-  IsOptional,
   IsString,
   MaxLength,
 } from "class-validator";
+import { Type } from "class-transformer";
 
 @InputType()
 class MatchCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => ChatCreateNestedManyWithoutMatchesInput,
+  })
+  @ValidateNested()
+  @Type(() => ChatCreateNestedManyWithoutMatchesInput)
+  @IsOptional()
+  @Field(() => ChatCreateNestedManyWithoutMatchesInput, {
+    nullable: true,
+  })
+  chats?: ChatCreateNestedManyWithoutMatchesInput;
+
   @ApiProperty({
     required: false,
     type: Number,

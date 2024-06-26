@@ -49,10 +49,26 @@ export class MessageControllerBase {
     @common.Body() data: MessageCreateInput
   ): Promise<Message> {
     return await this.service.createMessage({
-      data: data,
+      data: {
+        ...data,
+
+        chat: data.chat
+          ? {
+              connect: data.chat,
+            }
+          : undefined,
+      },
       select: {
+        chat: {
+          select: {
+            id: true,
+          },
+        },
+
+        content: true,
         createdAt: true,
         id: true,
+        sender: true,
         updatedAt: true,
       },
     });
@@ -75,8 +91,16 @@ export class MessageControllerBase {
     return this.service.messages({
       ...args,
       select: {
+        chat: {
+          select: {
+            id: true,
+          },
+        },
+
+        content: true,
         createdAt: true,
         id: true,
+        sender: true,
         updatedAt: true,
       },
     });
@@ -100,8 +124,16 @@ export class MessageControllerBase {
     const result = await this.service.message({
       where: params,
       select: {
+        chat: {
+          select: {
+            id: true,
+          },
+        },
+
+        content: true,
         createdAt: true,
         id: true,
+        sender: true,
         updatedAt: true,
       },
     });
@@ -132,10 +164,26 @@ export class MessageControllerBase {
     try {
       return await this.service.updateMessage({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          chat: data.chat
+            ? {
+                connect: data.chat,
+              }
+            : undefined,
+        },
         select: {
+          chat: {
+            select: {
+              id: true,
+            },
+          },
+
+          content: true,
           createdAt: true,
           id: true,
+          sender: true,
           updatedAt: true,
         },
       });
@@ -167,8 +215,16 @@ export class MessageControllerBase {
       return await this.service.deleteMessage({
         where: params,
         select: {
+          chat: {
+            select: {
+              id: true,
+            },
+          },
+
+          content: true,
           createdAt: true,
           id: true,
+          sender: true,
           updatedAt: true,
         },
       });

@@ -25,14 +25,14 @@ import { UserList } from "./user/UserList";
 import { UserCreate } from "./user/UserCreate";
 import { UserEdit } from "./user/UserEdit";
 import { UserShow } from "./user/UserShow";
-import { ChatList } from "./chat/ChatList";
-import { ChatCreate } from "./chat/ChatCreate";
-import { ChatEdit } from "./chat/ChatEdit";
-import { ChatShow } from "./chat/ChatShow";
 import { MessageList } from "./message/MessageList";
 import { MessageCreate } from "./message/MessageCreate";
 import { MessageEdit } from "./message/MessageEdit";
 import { MessageShow } from "./message/MessageShow";
+import { ChatList } from "./chat/ChatList";
+import { ChatCreate } from "./chat/ChatCreate";
+import { ChatEdit } from "./chat/ChatEdit";
+import { ChatShow } from "./chat/ChatShow";
 import { jwtAuthProvider } from "./auth-provider/ra-auth-jwt";
 
 const App = (): React.ReactElement => {
@@ -95,18 +95,18 @@ const App = (): React.ReactElement => {
           show={UserShow}
         />
         <Resource
-          name="Chat"
-          list={ChatList}
-          edit={ChatEdit}
-          create={ChatCreate}
-          show={ChatShow}
-        />
-        <Resource
           name="Message"
           list={MessageList}
           edit={MessageEdit}
           create={MessageCreate}
           show={MessageShow}
+        />
+        <Resource
+          name="Chat"
+          list={ChatList}
+          edit={ChatEdit}
+          create={ChatCreate}
+          show={ChatShow}
         />
       </Admin>
     </div>

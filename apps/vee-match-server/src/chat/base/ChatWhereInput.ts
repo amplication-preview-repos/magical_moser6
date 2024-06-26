@@ -13,7 +13,9 @@ import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { IsOptional, ValidateNested } from "class-validator";
+import { MatchWhereUniqueInput } from "../../match/base/MatchWhereUniqueInput";
+import { MessageListRelationFilter } from "../../message/base/MessageListRelationFilter";
 
 @InputType()
 class ChatWhereInput {
@@ -27,6 +29,30 @@ class ChatWhereInput {
     nullable: true,
   })
   id?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => MatchWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => MatchWhereUniqueInput)
+  @IsOptional()
+  @Field(() => MatchWhereUniqueInput, {
+    nullable: true,
+  })
+  match?: MatchWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => MessageListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => MessageListRelationFilter)
+  @IsOptional()
+  @Field(() => MessageListRelationFilter, {
+    nullable: true,
+  })
+  messages?: MessageListRelationFilter;
 }
 
 export { ChatWhereInput as ChatWhereInput };

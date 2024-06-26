@@ -9,5 +9,38 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class ChatUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { MatchWhereUniqueInput } from "../../match/base/MatchWhereUniqueInput";
+import { ValidateNested, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { MessageUpdateManyWithoutChatsInput } from "./MessageUpdateManyWithoutChatsInput";
+
+@InputType()
+class ChatUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => MatchWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => MatchWhereUniqueInput)
+  @IsOptional()
+  @Field(() => MatchWhereUniqueInput, {
+    nullable: true,
+  })
+  match?: MatchWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => MessageUpdateManyWithoutChatsInput,
+  })
+  @ValidateNested()
+  @Type(() => MessageUpdateManyWithoutChatsInput)
+  @IsOptional()
+  @Field(() => MessageUpdateManyWithoutChatsInput, {
+    nullable: true,
+  })
+  messages?: MessageUpdateManyWithoutChatsInput;
+}
+
 export { ChatUpdateInput as ChatUpdateInput };

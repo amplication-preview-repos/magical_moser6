@@ -1,6 +1,14 @@
 import * as React from "react";
-import { List, Datagrid, ListProps, DateField, TextField } from "react-admin";
+import {
+  List,
+  Datagrid,
+  ListProps,
+  ReferenceField,
+  TextField,
+  DateField,
+} from "react-admin";
 import Pagination from "../Components/Pagination";
+import { CHAT_TITLE_FIELD } from "../chat/ChatTitle";
 
 export const MessageList = (props: ListProps): React.ReactElement => {
   return (
@@ -12,8 +20,13 @@ export const MessageList = (props: ListProps): React.ReactElement => {
       pagination={<Pagination />}
     >
       <Datagrid rowClick="show">
+        <ReferenceField label="chat" source="chat.id" reference="Chat">
+          <TextField source={CHAT_TITLE_FIELD} />
+        </ReferenceField>
+        <TextField label="content" source="content" />
         <DateField source="createdAt" label="Created At" />
         <TextField label="ID" source="id" />
+        <TextField label="sender" source="sender" />
         <DateField source="updatedAt" label="Updated At" />
       </Datagrid>
     </List>

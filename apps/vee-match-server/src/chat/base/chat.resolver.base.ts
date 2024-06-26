@@ -18,11 +18,17 @@ import * as gqlACGuard from "../../auth/gqlAC.guard";
 import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
 import * as common from "@nestjs/common";
 import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Chat } from "./Chat";
 import { ChatCountArgs } from "./ChatCountArgs";
 import { ChatFindManyArgs } from "./ChatFindManyArgs";
 import { ChatFindUniqueArgs } from "./ChatFindUniqueArgs";
+import { CreateChatArgs } from "./CreateChatArgs";
+import { UpdateChatArgs } from "./UpdateChatArgs";
 import { DeleteChatArgs } from "./DeleteChatArgs";
+import { MessageFindManyArgs } from "../../message/base/MessageFindManyArgs";
+import { Message } from "../../message/base/Message";
+import { Match } from "../../match/base/Match";
 import { ChatService } from "../chat.service";
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Chat)
@@ -73,6 +79,59 @@ export class ChatResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
+  @graphql.Mutation(() => Chat)
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "create",
+    possession: "any",
+  })
+  async createChat(@graphql.Args() args: CreateChatArgs): Promise<Chat> {
+    return await this.service.createChat({
+      ...args,
+      data: {
+        ...args.data,
+
+        match: args.data.match
+          ? {
+              connect: args.data.match,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @common.UseInterceptors(AclValidateRequestInterceptor)
+  @graphql.Mutation(() => Chat)
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "update",
+    possession: "any",
+  })
+  async updateChat(@graphql.Args() args: UpdateChatArgs): Promise<Chat | null> {
+    try {
+      return await this.service.updateChat({
+        ...args,
+        data: {
+          ...args.data,
+
+          match: args.data.match
+            ? {
+                connect: args.data.match,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
   @graphql.Mutation(() => Chat)
   @nestAccessControl.UseRoles({
     resource: "Chat",
@@ -90,5 +149,44 @@ export class ChatResolverBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => [Message], { name: "messages" })
+  @nestAccessControl.UseRoles({
+    resource: "Message",
+    action: "read",
+    possession: "any",
+  })
+  async findMessages(
+    @graphql.Parent() parent: Chat,
+    @graphql.Args() args: MessageFindManyArgs
+  ): Promise<Message[]> {
+    const results = await this.service.findMessages(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => Match, {
+    nullable: true,
+    name: "match",
+  })
+  @nestAccessControl.UseRoles({
+    resource: "Match",
+    action: "read",
+    possession: "any",
+  })
+  async getMatch(@graphql.Parent() parent: Chat): Promise<Match | null> {
+    const result = await this.service.getMatch(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

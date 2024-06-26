@@ -26,6 +26,9 @@ import { Chat } from "./Chat";
 import { ChatFindManyArgs } from "./ChatFindManyArgs";
 import { ChatWhereUniqueInput } from "./ChatWhereUniqueInput";
 import { ChatUpdateInput } from "./ChatUpdateInput";
+import { MessageFindManyArgs } from "../../message/base/MessageFindManyArgs";
+import { Message } from "../../message/base/Message";
+import { MessageWhereUniqueInput } from "../../message/base/MessageWhereUniqueInput";
 
 @swagger.ApiBearerAuth()
 @common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
@@ -47,10 +50,25 @@ export class ChatControllerBase {
   })
   async createChat(@common.Body() data: ChatCreateInput): Promise<Chat> {
     return await this.service.createChat({
-      data: data,
+      data: {
+        ...data,
+
+        match: data.match
+          ? {
+              connect: data.match,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
+
+        match: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -75,6 +93,13 @@ export class ChatControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        match: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -100,6 +125,13 @@ export class ChatControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        match: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -130,10 +162,25 @@ export class ChatControllerBase {
     try {
       return await this.service.updateChat({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          match: data.match
+            ? {
+                connect: data.match,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
+
+          match: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -167,6 +214,13 @@ export class ChatControllerBase {
         select: {
           createdAt: true,
           id: true,
+
+          match: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -178,5 +232,108 @@ export class ChatControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @common.Get("/:id/messages")
+  @ApiNestedQuery(MessageFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Message",
+    action: "read",
+    possession: "any",
+  })
+  async findMessages(
+    @common.Req() request: Request,
+    @common.Param() params: ChatWhereUniqueInput
+  ): Promise<Message[]> {
+    const query = plainToClass(MessageFindManyArgs, request.query);
+    const results = await this.service.findMessages(params.id, {
+      ...query,
+      select: {
+        chat: {
+          select: {
+            id: true,
+          },
+        },
+
+        content: true,
+        createdAt: true,
+        id: true,
+        sender: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "update",
+    possession: "any",
+  })
+  async connectMessages(
+    @common.Param() params: ChatWhereUniqueInput,
+    @common.Body() body: MessageWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      messages: {
+        connect: body,
+      },
+    };
+    await this.service.updateChat({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "update",
+    possession: "any",
+  })
+  async updateMessages(
+    @common.Param() params: ChatWhereUniqueInput,
+    @common.Body() body: MessageWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      messages: {
+        set: body,
+      },
+    };
+    await this.service.updateChat({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "update",
+    possession: "any",
+  })
+  async disconnectMessages(
+    @common.Param() params: ChatWhereUniqueInput,
+    @common.Body() body: MessageWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      messages: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateChat({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

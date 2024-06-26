@@ -26,6 +26,8 @@ import { MatchFindUniqueArgs } from "./MatchFindUniqueArgs";
 import { CreateMatchArgs } from "./CreateMatchArgs";
 import { UpdateMatchArgs } from "./UpdateMatchArgs";
 import { DeleteMatchArgs } from "./DeleteMatchArgs";
+import { ChatFindManyArgs } from "../../chat/base/ChatFindManyArgs";
+import { Chat } from "../../chat/base/Chat";
 import { MatchService } from "../match.service";
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Match)
@@ -136,5 +138,25 @@ export class MatchResolverBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => [Chat], { name: "chats" })
+  @nestAccessControl.UseRoles({
+    resource: "Chat",
+    action: "read",
+    possession: "any",
+  })
+  async findChats(
+    @graphql.Parent() parent: Match,
+    @graphql.Args() args: ChatFindManyArgs
+  ): Promise<Chat[]> {
+    const results = await this.service.findChats(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

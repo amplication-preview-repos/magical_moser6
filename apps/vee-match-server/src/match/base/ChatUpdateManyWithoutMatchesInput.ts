@@ -10,53 +10,37 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { InputType, Field } from "@nestjs/graphql";
-import { ApiProperty } from "@nestjs/swagger";
 import { ChatWhereUniqueInput } from "../../chat/base/ChatWhereUniqueInput";
-import {
-  ValidateNested,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from "class-validator";
-import { Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
 
 @InputType()
-class MessageUpdateInput {
-  @ApiProperty({
-    required: false,
-    type: () => ChatWhereUniqueInput,
-  })
-  @ValidateNested()
-  @Type(() => ChatWhereUniqueInput)
-  @IsOptional()
-  @Field(() => ChatWhereUniqueInput, {
+class ChatUpdateManyWithoutMatchesInput {
+  @Field(() => [ChatWhereUniqueInput], {
     nullable: true,
   })
-  chat?: ChatWhereUniqueInput | null;
+  @ApiProperty({
+    required: false,
+    type: () => [ChatWhereUniqueInput],
+  })
+  connect?: Array<ChatWhereUniqueInput>;
 
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
+  @Field(() => [ChatWhereUniqueInput], {
     nullable: true,
   })
-  content?: string | null;
+  @ApiProperty({
+    required: false,
+    type: () => [ChatWhereUniqueInput],
+  })
+  disconnect?: Array<ChatWhereUniqueInput>;
 
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
+  @Field(() => [ChatWhereUniqueInput], {
     nullable: true,
   })
-  sender?: string | null;
+  @ApiProperty({
+    required: false,
+    type: () => [ChatWhereUniqueInput],
+  })
+  set?: Array<ChatWhereUniqueInput>;
 }
 
-export { MessageUpdateInput as MessageUpdateInput };
+export { ChatUpdateManyWithoutMatchesInput as ChatUpdateManyWithoutMatchesInput };

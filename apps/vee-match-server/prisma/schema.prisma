@@ -61,3 +61,15 @@ model User {
   userAnswers UserAnswer[]
   username    String       @unique
 }
+
+model Chat {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}

@@ -101,6 +101,16 @@ class User {
   lastName!: string | null;
 
   @ApiProperty({
+    required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  profilePics!: JsonValue;
+
+  @ApiProperty({
     required: true,
   })
   @IsJSONValue()

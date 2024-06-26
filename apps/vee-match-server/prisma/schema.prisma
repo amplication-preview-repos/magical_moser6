@@ -57,6 +57,7 @@ model User {
   id          String       @id @default(cuid())
   lastName    String?
   password    String
+  profilePics Json?
   roles       Json
   updatedAt   DateTime     @updatedAt
   userAnswers UserAnswer[]

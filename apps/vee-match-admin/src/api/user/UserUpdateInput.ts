@@ -8,6 +8,7 @@ export type UserUpdateInput = {
   gender?: string | null;
   lastName?: string | null;
   password?: string;
+  profilePics?: InputJsonValue;
   roles?: InputJsonValue;
   userAnswers?: UserAnswerUpdateManyWithoutUsersInput;
   username?: string;

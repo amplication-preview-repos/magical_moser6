@@ -9,6 +9,7 @@ export type User = {
   gender: string | null;
   id: string;
   lastName: string | null;
+  profilePics: JsonValue;
   roles: JsonValue;
   updatedAt: Date;
   userAnswers?: Array<UserAnswer>;

@@ -24,6 +24,7 @@ export const UserEdit = (props: EditProps): React.ReactElement => {
         <TextInput label="gender" source="gender" />
         <TextInput label="Last Name" source="lastName" />
         <PasswordInput label="Password" source="password" />
+        <div />
         <SelectArrayInput
           source="roles"
           choices={ROLES_OPTIONS}

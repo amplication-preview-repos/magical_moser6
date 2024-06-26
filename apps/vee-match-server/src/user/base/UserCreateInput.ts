@@ -93,6 +93,16 @@ class UserCreateInput {
   password!: string;
 
   @ApiProperty({
+    required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  profilePics?: InputJsonValue;
+
+  @ApiProperty({
     required: true,
   })
   @IsJSONValue()

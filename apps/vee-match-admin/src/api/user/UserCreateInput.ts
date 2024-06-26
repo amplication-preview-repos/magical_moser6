@@ -8,6 +8,7 @@ export type UserCreateInput = {
   gender?: string | null;
   lastName?: string | null;
   password: string;
+  profilePics?: InputJsonValue;
   roles: InputJsonValue;
   userAnswers?: UserAnswerCreateNestedManyWithoutUsersInput;
   username: string;
